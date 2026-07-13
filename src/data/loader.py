@@ -6,13 +6,7 @@ DATA_DIR = Path('data/prices')
 COLUMNS = ["Open", "High", "Low", "Close", "Volume", "Dividends", "Stock Splits"]
 
 def download_ticker(ticker: str):
-  df = pd.DataFrame(yf.download(
-    ticker,
-    period = "max",
-    interval = "1d",
-    auto_adjust = False,
-    actions = True
-    ))
+  df = yf.Ticker(ticker).history(period="max", auto_adjust=False, actions=True)
   
   if df is None or df.empty:
     raise ValueError(f"Ticker name '{ticker}' does not exist")
