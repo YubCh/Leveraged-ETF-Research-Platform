@@ -3,6 +3,7 @@ import pandas as pd
 import yfinance as yf
 
 DATA_DIR = Path('data/prices')
+COLUMNS = ["Open", "High", "Low", "Close", "Volume", "Dividends", "Stock Splits"]
 
 def download_ticker(ticker: str):
   df = pd.DataFrame(yf.download(
@@ -10,12 +11,13 @@ def download_ticker(ticker: str):
     period = "max",
     interval = "1d",
     auto_adjust = False,
-    progress = False
+    actions = True
     ))
   
   if df is None or df.empty:
     raise ValueError(f"Ticker name '{ticker}' does not exist")
-  return df
+  df.index = df.index.tz_localize(None)
+  return df[COLUMNS]
 
 
 if __name__ == "__main__":
