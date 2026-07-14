@@ -31,6 +31,10 @@ def get_data(ticker: str):
  
   df_old = pd.read_csv(path, index_col=0, parse_dates=True)
   start = df_old.index.max() + pd.Timedelta(days=1)
+  if start > pd.Timestamp.today().normalize():
+    print(f"Ticker name {ticker} already up to date")
+    return df_old
+  
   df_new = download_ticker(ticker, start=start)
 
   if df_new.empty:
