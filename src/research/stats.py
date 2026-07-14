@@ -15,8 +15,11 @@ def describe(prices):
       current += 1
   longest = max(longest, current)
   return {
-    "CAGR": (prices.iloc[-1] / prices.iloc[0]) ** (252 / len(prices)) - 1,
+    "CAGR": (prices.iloc[-1] / prices.iloc[0]) ** (252 / (len(prices) - 1)) - 1,
     "Volatility (annualized)": prices.pct_change().std() * 252 ** 0.5,
     "Max Drawdown": dd.min(),
-    "Longest Underwater": longest / 252
+    "Longest Underwater": longest / 252,
+    "Best Day": prices.pct_change().max(),
+    "Worst Day": prices.pct_change().min(),
+    "Total Return": ((prices.iloc[-1] / prices.iloc[0]) - 1) * 100
   }
