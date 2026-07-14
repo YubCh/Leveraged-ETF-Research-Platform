@@ -1,6 +1,6 @@
 from src.data.loader import download_ticker, get_data
 from src.data.adjust import adjust
-from src.data.artificial_data import simulate, extend_data
+from src.data.artificial_data import simulate
 import pandas as pd
 import yfinance as yf
 
