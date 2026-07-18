@@ -12,9 +12,9 @@ def simulate(adj_close, leverage, expense_ratio, borrow_rate = 0.02):
   leveraged_series = 100 * (1 + leveraged_daily_returns).cumprod()
   return leveraged_series
 #some tickers like TQQQ were born back in 2010. To track it back to a certain date we have to concat the ticker TQQQ and get the data before 2010 from a simulated dataset
-def extend_data(ticker, leverage, expense_ratio):
+def extend_data(ticker, leverage, expense_ratio, base="QQQ"):
   real = adjust(get_data(ticker), dividends=True, splits=False)
-  sim = simulate(adjust(get_data("QQQ"), dividends=True, splits=False), leverage, expense_ratio)
+  sim = simulate(adjust(get_data(base), dividends=True, splits=False), leverage, expense_ratio)
 
   first_date = real.index.min()
   scale =  real.iloc[0] / sim.loc[first_date] 
