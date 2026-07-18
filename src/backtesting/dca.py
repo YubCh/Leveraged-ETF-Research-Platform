@@ -43,4 +43,12 @@ def only_buy_draw_down(prices, draw_down):
       #shift since we buy from last days price
   return pd.Series(ret, index=prices.index, dtype="float64").shift(1)
  
-  
+  #dead cat bounce drawdown
+
+  #exp draw down
+# buys from min_at to max_at dd
+def defined_drawdown(prices, max_at, min_at):
+  dd = (1 - prices/prices.cummax()) * 100
+  target = (dd/max_at).clip(upper=1.0)
+  target[dd <= min_at] = float("nan")
+  return target.round(4).shift(1)
