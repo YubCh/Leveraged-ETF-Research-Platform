@@ -18,7 +18,7 @@ def dca(prices, indicator=None, amount = 100, period_in_d=21, start_capital=1000
       if not pd.isna(target):
         shares, not_invested_capital = allocate(shares, not_invested_capital, prices.iloc[days], target)
        
-    portfolio_value.append(shares * prices.iloc[days])
+    portfolio_value.append(shares * prices.iloc[days] + not_invested_capital)
   return pd.Series(portfolio_value,index=prices.index[start_date:])
  
 def allocate(shares, capital, price, target):
