@@ -3,14 +3,15 @@ import math
 
 #indicator as strategy containing Series of number 1 to 0 showing the percentage of capital in stocks 0.8 -> 80% of capital into stocks. 0 -> sell every stock 
 
-def dca(prices, indicator=None, amount = 100, period_in_d=21, start_capital=1000, start_date = 0):
+def dca(prices, indicator=None, income = 100, income_period = 21, invest_period=21, start_capital=1000, start_date = 0):
   portfolio_value = []
   shares = 0
   not_invested_capital = start_capital
   
   for days in range(start_date, len(prices)):
-    if days % period_in_d == 0:
-      not_invested_capital += amount
+    if days % income_period == 0:
+      not_invested_capital += income
+    if days % invest_period == 0:
       if indicator is None:
         target = 1.0                        
       else:
