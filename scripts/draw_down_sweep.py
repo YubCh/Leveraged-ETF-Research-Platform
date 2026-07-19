@@ -7,8 +7,18 @@ tqqq = extend_data("TQQQ", 3, 0.0084)
 ticker = tqqq
 
 results = {}
+row = {}
+for start in [0, 500, 1000, 2000]:
+  
+  standard_dca = dca(ticker, None, 100, 21, 21, 0, start)
+  total_investment = total_invested(len(tqqq), 100, 21, 0, start)
+  row[f"start: {start}"] = standard_dca.iloc[-1]/total_investment
+results["plain DCA (benchmark)"] = row
+
 for max_at in [10,30,50,70]:
   for min_at in [0, 5, 10, 20, 40]:
+    if min_at >= max_at:
+      continue
     for p in [0.5, 1, 1.5, 2.0]:
       row = {}
       for start in [0, 500, 1000, 2000]:
@@ -22,3 +32,4 @@ df = pd.DataFrame(results).T
 pd.set_option("display.float_format", "{:.2f}".format)
 print(df)
 print(df.max().max())
+print(df.min().min())
