@@ -47,9 +47,11 @@ def only_buy_draw_down(prices, draw_down):
   #dead cat bounce drawdown
 
   #exp draw down
-# buys from min_at to max_at dd
-def defined_drawdown(prices, max_at, min_at):
+# buys from min_at to max_at dd. Exponent for exponential curve.
+def defined_drawdown(prices, max_at, min_at = 0, exponent=1):
   dd = (1 - prices/prices.cummax()) * 100
-  target = (dd/max_at).clip(upper=1.0)
+  target = (dd/max_at).clip(upper=1.0) ** exponent
   target[dd <= min_at] = float("nan")
   return target.round(4).shift(1)
+
+ 
