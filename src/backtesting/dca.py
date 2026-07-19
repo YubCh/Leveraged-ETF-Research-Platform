@@ -54,4 +54,6 @@ def defined_drawdown(prices, max_at, min_at = 0, exponent=1):
   target[dd <= min_at] = float("nan")
   return target.round(4).shift(1)
 
- 
+def total_invested(n_days, income=100, income_period=21, start_capital=1000, start_date=0):
+    paydays = len([d for d in range(start_date, n_days) if d % income_period == 0])
+    return start_capital + income * paydays
