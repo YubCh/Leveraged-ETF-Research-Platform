@@ -5,13 +5,7 @@ import pandas as pd
 import yfinance as yf
 
 
-def test_download_ticker(ticker):
-  df = download_ticker(ticker)
-  return
-
-def test_get_data():
-  return
-
+ 
 def test_adjust(ticker):
     ours = adjust(download_ticker(ticker))
     yahoo = yf.download(ticker, period="max", auto_adjust=False)["Adj Close"].squeeze()
