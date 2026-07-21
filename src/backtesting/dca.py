@@ -28,32 +28,6 @@ def allocate(shares, capital, price, target):
   capital += (shares - real_shares_amount) * price
   return real_shares_amount, capital 
    
-
-
-def only_buy_draw_down(prices, draw_down):
-  ret = []
-  all_time_high = 0
-  for days in range(len(prices)):
-    if all_time_high < prices.iloc[days]:
-      all_time_high = prices.iloc[days]
-      ret.append(None)
-    elif (1 - (prices.iloc[days] / all_time_high)) * 100 >= draw_down:
-      ret.append(1.0)
-    else:
-      ret.append(None)
-      #shift since we buy from last days price
-  return pd.Series(ret, index=prices.index, dtype="float64").shift(1)
- 
-  #dead cat bounce drawdown
-
-  #exp draw down
-# buys from min_at to max_at dd. Exponent for exponential curve.
-def defined_drawdown(prices, max_at, min_at = 0, exponent=1):
-  dd = (1 - prices/prices.cummax()) * 100
-  target = (dd/max_at).clip(upper=1.0) ** exponent
-  target[dd <= min_at] = float("nan")
-  return target.round(4).shift(1)
-
 def total_invested(n_days, income=100, income_period=21, start_capital=1000, start_date=0):
     paydays = len([d for d in range(start_date, n_days) if d % income_period == 0])
     return start_capital + income * paydays
