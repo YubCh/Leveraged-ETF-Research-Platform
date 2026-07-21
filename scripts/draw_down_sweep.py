@@ -1,5 +1,3 @@
-from src.data.loader import get_data
-from src.data.adjust import adjust
 from src.data.artificial_data import extend_data
 from src.backtesting.dca import dca, defined_drawdown, total_invested
 import pandas as pd
@@ -15,7 +13,7 @@ for start in [0, 500, 1000, 2000]:
   row[f"start: {start}"] = standard_dca.iloc[-1]/total_investment
 results["plain DCA (benchmark)"] = row
 
-for max_at in [10,30,50,70]:
+for max_at in [30,50,70]:
   for min_at in [0, 5, 10, 20, 40]:
     if min_at >= max_at:
       continue
