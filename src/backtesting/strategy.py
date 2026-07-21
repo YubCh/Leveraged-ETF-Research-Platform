@@ -1,0 +1,18 @@
+import pandas as pd
+import math
+
+
+#exp draw down
+# buys from min_at to max_at dd. Exponent for exponential curve.
+def defined_drawdown(prices, max_at, min_at = 0, exponent=1):
+  dd = (1 - prices/prices.cummax()) * 100
+  target = (dd/max_at).clip(upper=1.0) ** exponent
+  target[dd <= min_at] = float("nan")
+  return target.round(4).shift(1)
+
+
+#buy at top
+def buy_high(prices):
+  target = (prices == prices.cummax()).astype(float)
+  target = target.where(target == 1.0)
+  return target.shift(1)
