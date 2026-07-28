@@ -23,20 +23,20 @@ def compare(series_dict, title="", normalize=True, log=True):
     plt.show()
 
 #ccounts the drawdown from start to end date if mean=True we get the mean of a single year compressed. 
-def draw_down_histogram(prices, start, end=None, mean=False):
+def draw_down_histogram(prices, start, end=None, mean=False, window=252):
     if end is None:
         end = len(prices)
-    dd = np.array(range(10,90,10))
     total_days = end - start
-    scale_to_year =  365 / total_days
-    scale = scale_to_year if mean else 1 
-    count = np.array([])
-    for each in dd:
-        count = np.append(count, count_draw_downs(prices,start,each))
+    scale = window / total_days if mean else 1 
+    dd = np.arange(10,90,10)
 
-    plt.bar(dd,count*scale,width=1.0,edgecolor='black',color='blue', align="edge")
+    pure_data = np.array([count_draw_downs(prices, start, level, window) for level in dd])
+    modified_data = np.append(pure_data[:-1] - pure_data[1:], pure_data[-1])
+    modified_data = np.clip(modified_data, 0, None)
+
+    plt.bar(dd,modified_data*scale,width=1.0,edgecolor='black',color='blue', align="edge")
     plt.xlabel("Drawdown %")
     plt.ylabel("Per year" if mean else "Count")
-    plt.title(f"Drawdowns frequency per a year" if mean else f"Amount of DrawDowns from year: {start} to {end}")
+    plt.title(f"Drawdowns frequency per a {window} days" if mean else f"Amount of DrawDowns from day: {start} to {end}")
     plt.show()
 
