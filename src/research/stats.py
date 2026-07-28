@@ -37,3 +37,17 @@ def longest_underwater_years(dd):
     else:
       current += 1
   return max(longest, current)
+
+def count_draw_downs(prices, start, max_at, window=100):
+    peak = prices.rolling(window).max()         
+    dd = (1 - prices / peak) * 100
+    dd = dd.iloc[start:]
+    count = 0
+    below = False
+    for value in dd:
+        if value >= max_at and not below:
+            count += 1
+            below = True
+        elif value < max_at:
+            below = False
+    return count
