@@ -23,3 +23,8 @@ def buy_high(prices):
   target = (prices == prices.cummax()).astype(float)
   target = target.where(target == 1.0)
   return target.shift(1)
+
+
+def moving_average(prices, ma_rate):
+  return prices.rolling(ma_rate).mean()
+
