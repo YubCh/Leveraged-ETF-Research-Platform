@@ -28,3 +28,9 @@ def buy_high(prices):
 def moving_average(prices, ma_rate):
   return prices.rolling(ma_rate).mean()
 
+#buys over ma, sell under ma
+def sma_strategy(prices, ma_rate):
+  ma = moving_average(prices, ma_rate)
+  target = (prices > ma).astype(float) 
+  target[ma.isna()] = float("nan")
+  return target.shift(1)
