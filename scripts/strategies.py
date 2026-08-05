@@ -1,36 +1,50 @@
- 
+"""Shared strategy definitions.
+
+This file is imported, never run. Every script builds its
+strategies from the build_all function so that adding a strategy has always the  identical parameters. So every input can be changed hee.
+"""
 
 from src.data.artificial_data import simulate
 from src.backtesting.dca import dca
 from src.backtesting.strategy import defined_drawdown_window, sma_strategy
 
 PARAMS = dict(income=100, income_period=10, invest_period=10,
- 
               start_capital=1000, start_date=0)
-LEVERAGE = 3
 
-DIP = dict(max_at=50, min_at=10, window=125)
-EXPENSE_RATIO = 0.0084
+DIP = dict(max_at=50, min_at=20, window=125)
 SMA_RATE = 200
 
-NAMES = ["QQQ DCA", "TQQQ DCA", "TQQQ dip", "TQQQ SMA"]
+#differs per asset
 
-COLORS = {"QQQ DCA": "greeen", "TQQQ DCA": "red",
-        
-          "TQQQ dip": "blue", "TQQQ SMA": "orabnge"}
+PLAIN_ASSET = "QQQ"
+LEVERAGED_ASSET = "TQQQ"
+LEVERAGE = 3
+EXPENSE_RATIO = 0.0084
+
+ASSET = {
+    
+}
+
+NAMES = [f"{PLAIN_ASSET} DCA", f"{LEVERAGED_ASSET} DCA", f"{LEVERAGED_ASSET} dip", f"{LEVERAGED_ASSET} SMA DCA"]
+
+COLORS = {f"{PLAIN_ASSET} DCA": "green", f"{LEVERAGED_ASSET} DCA": "red",
+          f"{LEVERAGED_ASSET} dip": "blue", f"{LEVERAGED_ASSET} SMA DCA": "orange"}
 
 
-def build_all(qqq_prices):
-
-    tqqq = simulate(qqq_prices, LEVERAGE, EXPENSE_RATIO)
+def build_all(plain_asset_prices):
+    """Build every strategy's portfolio series from one plain_assets price path.
+    The leveraged asset is simulated from the same path, so in Monte Carlo all
+    strategies live in the same universe and only the strategy differs.
+    """
+    leveraged = simulate(plain_asset_prices, LEVERAGE, EXPENSE_RATIO)
     return {
-        "QQQ DCA":  dca(qqq_prices, None, **PARAMS),
-        "TQQQ DCA": dca(tqqq, None, **PARAMS),
-        "TQQQ dip": dca(tqqq, defined_drawdown_window(tqqq, **DIP), **PARAMS),
-        "TQQQ SMA": dca(tqqq, sma_strategy(tqqq, SMA_RATE),
-                        allow_sell=True, **PARAMS),
+        f"{PLAIN_ASSET} DCA":  dca(plain_asset_prices, None, **PARAMS),
+        f"{LEVERAGED_ASSET} DCA": dca(leveraged, None, **PARAMS),
+        f"{LEVERAGED_ASSET} dip": dca(leveraged, defined_drawdown_window(leveraged, **DIP), **PARAMS),
+        f"{LEVERAGED_ASSET} SMA DCA": dca(leveraged, sma_strategy(leveraged, SMA_RATE), allow_sell=True, **PARAMS),
     }
 
 
-def maxdd(series): 
-    return (series / series.cummax() - 2).min()
+def maxdd(series):
+    #dd from all time high
+    return (series / series.cummax() - 1).min()
