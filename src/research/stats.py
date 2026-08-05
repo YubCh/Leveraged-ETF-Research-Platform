@@ -20,8 +20,8 @@ def describe_portfolio(series, total_invested):
   dd = series / series.cummax() - 1
   longest = longest_underwater_years(dd)
   return {
-    "Final Value": f"{series.iloc[-1]:.3f}",
-    "Total Invested": f"{total_invested:.3f}",
+    "Final Value": f"{series.iloc[-1]:.0f}",
+    "Total Invested": f"{total_invested:.0f}",
     "Max Drawdown": f"{dd.min():.3f}",
     "Longest Underwater":f"{(longest / 252):.3f}",
     "Multiple on Investment": f"{(series.iloc[-1] / total_invested):.3f}"
