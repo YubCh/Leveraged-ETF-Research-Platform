@@ -56,12 +56,9 @@ def report(finals, dds):
         print(f"  {name} {dds[name].median():.3f}")
 
     print(f"\n win rate vs {BENCHMARK} (final value):")
-    bench = finals[BENCHMARK]
-    for name in NAMES:#
-        if name == BENCHMARK:
-            continue
+    for name in NAMES[1:]:
         print(f"  {name} beats {BENCHMARK} in "
-              f"{(finals[name] > bench).mean():.1%} of paths")
+              f"{(finals[name] > finals[BENCHMARK]).mean():.1%} of paths")
     print("dddddddddddd")
     print(f"\nwin rate vs {NAMES[1]}:")
 
@@ -74,30 +71,55 @@ def report(finals, dds):
 def distribution_plot(finals, real_finals=None):
     """Outcome histograms.
 
-      Log dollar axis:
+    Log dollar axis:
     axis spacing is logarithmic for better reability.
     real_finals (optional): is final value from the real history,
-    drawn as a vertical line so you can see how good our  actully performed.
+    drawn as a vertical line so you can see how good our actully performed.
     """
     all_values = pd.concat(finals.values())
     positive = all_values[all_values > 0]
    #real history has to be in range 
     lo, hi = max(positive.min(), 1), positive.max()
     if real_finals:
-        print("real finals working if shown debug")
+         
         lo = min(lo, min(real_finals.values()))
         hi = max(hi, max(real_finals.values()))
     bins = np.logspace(np.log10(lo), np.log10(hi), 50)
 
     fig, axes = plt.subplots(2, 2, figsize=(13, 8), sharex=True, sharey=True)
+    benchmark_median = finals[BENCHMARK].median()
 
     for ax, name in zip(axes.flat, NAMES):
         ax.hist(finals[name], bins=bins, color=COLORS[name], alpha=0.75)
-        for ax in axes[1]:
-          ax.set_xlabel("Final portfolio value ($, log axis)")
-        for ax in axes[:, 0]:
-          ax.set_ylabel("Number of histories")
-    
+
+        ax.axvline(finals[name].median(), color="black",
+          linestyle="--",
+          linewidth=2,
+          label=f"MC median {finals[name].median():.0f}")
+
+        ax.axvline(benchmark_median, color="gray",
+          linestyle=":",
+          linewidth=2,
+          label=f"{BENCHMARK} median")
+
+
+        if real_finals and name in real_finals:
+          rv = real_finals[name]
+          pct = (finals[name] < rv).mean()
+          ax.axvline(
+            rv,
+            color="magenta",
+            linewidth=2.5,
+            label=f"real history {rv:.0f}, beats ({pct:.0%} other paths)")
+        
+        ax.set_xscale("log")
+        ax.set_title(name)
+        ax.legend(fontsize=8)
+
+    for ax in axes[1]:
+      ax.set_xlabel("Final portfolio value ($, log axis)")
+    for ax in axes[:, 0]:
+      ax.set_ylabel("Number of histories")
 
     fig.suptitle("Outcome distributions across bootstrapped histories")
     plt.tight_layout()
@@ -111,7 +133,6 @@ def run(n_paths=500, plot=True):
     report(finals, dds)
 
     if plot:
-        
         real = adjust(get_data(PLAIN_ASSET))
         real_finals = {name: s.iloc[-1] for name, s in build_all(real).items()}
         distribution_plot(finals, real_finals)
