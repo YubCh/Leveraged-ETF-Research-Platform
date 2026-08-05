@@ -79,14 +79,14 @@ def monte_carlo_comparison(n_paths=200):
  
 # 3. Drawdown frequency
  
-def _count_bands(series, window=100):
+def _count_bands(series, window=125):
     levels = np.arange(10, 90, 10)
     cumulative = np.array([count_draw_downs(series, 0, lvl, window) for lvl in levels])
     bands = np.append(cumulative[:-1] - cumulative[1:], cumulative[-1])
     return levels, np.clip(bands, 0, None)
 
 
-def drawdown_count_comparison(window=100):
+def drawdown_count_comparison(window=125):
     print(f"Finding 2.3: drawdown frequency (window={window})")
     tqqq = simulate(adjust(get_data("QQQ")), 3, 0.0084)
 
