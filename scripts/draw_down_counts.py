@@ -1,3 +1,16 @@
+"""
+How often does a strategy crash in a certain period, and how deep.
+Max drawdown reports the worst crash. Since we are trading with leverage assets we want to see how often how deep and how fast a crash appears.
+
+The counting uses a window-period for a crash, since e.g. the all time high in extended tqqq takes ~20years to recover. The window can be chosen. 
+"""
+
+
+
+
+
+
+
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -16,6 +29,7 @@ def count_dd(series, window=125):
   return np.clip(pure_dd, 0 , None)
 
 def run(window=125):
+  print(f"Drawdown frequency (window={window})")
   plain_asset = adjust(get_data(PLAIN_ASSET))
   strategies = build_all(plain_asset)
 
@@ -30,17 +44,24 @@ def run(window=125):
     print(f"{name}", bars[name])
   print("\n")
 
-  width = 8 / len(NAMES)
-  plt.figure(figsize=(11,6))
-  for i, name in enumerate(NAMES):
-     plt.bar(DD_LEVELS + i * width, bars[name], width=width, align="edge",color=COLORS[name],alpha=0.7, label=name)
+  fig, axes = plt.subplots(2,2, figsize=(13,8), sharex=True, sharey=True)
+  for ax, name in zip(axes.flat, NAMES):
+     ax.bar(DD_LEVELS, bars[name],
+             width=8,
+             align="edge", color=COLORS[name], alpha=0.8,edgecolor="black")
+     ax.set_title(f"{name} (total: {bars[name].sum()})")
+     ax.grid(True, alpha=0.3, linestyle="--")
+     ax.set_xticks(DD_LEVELS)
+  for ax in axes[1]:
+     ax.set_xlabel("Drawdown depth")
+  for ax in axes[:, 0]:
+     ax.set_ylabel("Number of drawdowns")
+  for ax in axes.flat:
+     ax.tick_params(labelbottom=True, labelleft=True)
 
-     plt.xlabel("Drawdown depth")
-     plt.ylabel("Number of drawdowns")
-     plt.title(f"Hof often each strategy crashes and their depth (window={window})")
-     plt.tight_layout()
-     plt.show()
-     
+  fig.suptitle(f"How often each strategy crashes and their depth (window={window})")
+  plt.tight_layout()
+  plt.show()
     
 
 
