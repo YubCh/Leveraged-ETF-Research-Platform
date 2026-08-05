@@ -8,8 +8,8 @@ def describe(prices):
   return {
     "CAGR": (prices.iloc[-1] / prices.iloc[0]) ** (252 / (len(prices) - 1)) - 1,
     "Volatility (annualized)": prices.pct_change().std() * 252 ** 0.5,
-    "Max Drawdown": dd.min(),
-    "Longest Underwater": longest / 252,
+    "Max Drawdown": f"{dd.min():.3f}",
+    "Longest Underwater": f"{(longest / 252):.3f}",
     "Best Day": prices.pct_change().max(),
     "Worst Day": prices.pct_change().min(),
     "Total Return": ((prices.iloc[-1] / prices.iloc[0]) - 1) * 100
@@ -20,11 +20,11 @@ def describe_portfolio(series, total_invested):
   dd = series / series.cummax() - 1
   longest = longest_underwater_years(dd)
   return {
-    "Final Value": series.iloc[-1],
-    "Total Invested": total_invested,
-    "Max Drawdown": dd.min(),
-    "Longest Underwater": longest / 252,
-    "Multiple on Investment": series.iloc[-1] / total_invested
+    "Final Value": f"{series.iloc[-1]:.3f}",
+    "Total Invested": f"{total_invested:.3f}",
+    "Max Drawdown": f"{dd.min():.3f}",
+    "Longest Underwater":f"{(longest / 252):.3f}",
+    "Multiple on Investment": f"{(series.iloc[-1] / total_invested):.3f}"
   }
 
 
