@@ -25,11 +25,12 @@ NAMES =
 BENCHMARK = NAMES[0]
 
 
-def collect(n_paths=500):
+def collect(n_paths=500,start=None):
     """Run every strategy on n_paths bootstrapped histories.
     Returns (finals, maxdrawdowns) as dicts of name -> pd.Series."""
     plain_asset = adjust(get_data(PLAIN_ASSET))
-
+    if start:
+        plain_asset = plain_asset.loc[start:]
     finals = {name: [] for name in NAMES}
     dds = {name: [] for name in NAMES}
 
@@ -45,7 +46,6 @@ def collect(n_paths=500):
 def report(finals, dds):
     print("final value:")
     for name in NAMES:
-        print("here starts s;;---dd")
         f = finals[name]
         print(f"  {name} median={f.median():.0f}  mean={f.mean():.0f}"
         
@@ -128,10 +128,10 @@ def distribution_plot(finals, real_finals=None):
     plt.show()
 
 
-def run(n_paths=500, plot=True):
-    
-    print(f"Monte Carlo ({n_paths} paths)")
-    finals, dds = collect(n_paths)
+def run(n_paths=500, plot=True, start=None):
+    label = f"from {start}" if start else""
+    print(f"Monte Carlo ({n_paths} paths){label}")
+    finals, dds = collect(n_paths,start)
     report(finals, dds)
 
     if plot:
