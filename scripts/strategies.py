@@ -3,7 +3,8 @@
 This file is imported, never run. Every script builds its
 strategies from the build_all function so that adding a strategy has always the  identical parameters. So every input can be changed hee.
 """
-
+from src.data.loader import get_data
+from src.data.adjust import adjust
 from src.data.artificial_data import simulate
 from src.backtesting.dca import dca
 from src.backtesting.strategy import defined_drawdown_window, sma_strategy
@@ -21,15 +22,17 @@ LEVERAGED_ASSET = "TQQQ"
 LEVERAGE = 3
 EXPENSE_RATIO = 0.0084
 
-ASSET = {
-    
-}
 
 NAMES = [f"{PLAIN_ASSET} DCA", f"{LEVERAGED_ASSET} DCA", f"{LEVERAGED_ASSET} dip", f"{LEVERAGED_ASSET} SMA DCA"]
 
 COLORS = {f"{PLAIN_ASSET} DCA": "green", f"{LEVERAGED_ASSET} DCA": "red",
           f"{LEVERAGED_ASSET} dip": "blue", f"{LEVERAGED_ASSET} SMA DCA": "orange"}
 
+def build_asset(plain_asset):
+    return {
+    "plain":plain_asset,
+    "leveraged":simulate(plain_asset, LEVERAGE, EXPENSE_RATIO)
+}
 
 def build_all(plain_asset_prices):
     """Build every strategy's portfolio series from one plain_assets price path.
