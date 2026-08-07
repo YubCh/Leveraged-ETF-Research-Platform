@@ -120,6 +120,8 @@ def distribution_plot(finals, real_finals=None):
       ax.set_xlabel("Final portfolio value ($, log axis)")
     for ax in axes[:, 0]:
       ax.set_ylabel("Number of histories")
+    for ax in axes.flat:
+      ax.tick_params(labelbottom=True, labelleft=True)
 
     fig.suptitle("Outcome distributions across bootstrapped histories")
     plt.tight_layout()
