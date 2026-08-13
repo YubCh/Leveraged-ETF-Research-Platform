@@ -8,7 +8,7 @@ and runs every strategy in every universe
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
+from scripts.draw_down_counts import count_dd, DD_LEVELS, plot_bars, report_bars
 from src.data.adjust import adjust
 from src.data.loader import get_data
 from src.research.monte_carlo import block_bootstrap
@@ -23,9 +23,9 @@ NAMES =
 """
 
 BENCHMARK = NAMES[0]
+DD_WINDOW = 125
 
-
-def collect(n_paths=500,start=None):
+def collect(n_paths=500,start=None,with_bars=True):
     """Run every strategy on n_paths bootstrapped histories.
     Returns (finals, maxdrawdowns) as dicts of name -> pd.Series."""
     plain_asset = adjust(get_data(PLAIN_ASSET))
@@ -33,14 +33,18 @@ def collect(n_paths=500,start=None):
         plain_asset = plain_asset.loc[start:]
     finals = {name: [] for name in NAMES}
     dds = {name: [] for name in NAMES}
+    bars = {name: [] for name in NAMES}
 
     for path in block_bootstrap(plain_asset, n_paths=n_paths):
         for name, series in build_all(path).items():
             finals[name].append(series.iloc[-1])
             dds[name].append(maxdd(series))
+            if with_bars:
+                bars[name].append(count_dd(series, DD_WINDOW))
 
     return ({k: pd.Series(v) for k, v in finals.items()},
-            {k: pd.Series(v) for k, v in dds.items()})
+            {k: pd.Series(v) for k, v in dds.items()},
+            {k: np.array(v) for k,v in bars.items()} if with_bars else None)
 
 
 def report(finals, dds):
@@ -131,14 +135,23 @@ def distribution_plot(finals, real_finals=None):
 def run(n_paths=500, plot=True, start=None):
     label = f"from {start}" if start else""
     print(f"Monte Carlo ({n_paths} paths){label}")
-    finals, dds = collect(n_paths,start)
+    finals, dds,bars = collect(n_paths,start)
     report(finals, dds)
+    report_bars(bars)
 
     if plot:
         real = adjust(get_data(PLAIN_ASSET))
         real_finals = {name: s.iloc[-1] for name, s in build_all(real).items()}
         distribution_plot(finals, real_finals)
-    return finals, dds
+        median_bars = {name: np.median(bars[name], axis = 0) for name in NAMES}
+        mean_bars = {name: np.mean(bars[name], axis=0) for name in NAMES}
+        plot_bars(median_bars, DD_WINDOW,
+                                     f"Drawdown frequency across bootstrapped histories (median per path)")
+        plot_bars(mean_bars, DD_WINDOW,
+                  f"Drawdown frequency across bootstrapped (mean per path)")
+        for v in median_bars:
+            print(f"key value: {v}")
+    return finals, dds,bars
 
 
 if __name__ == "__main__":
