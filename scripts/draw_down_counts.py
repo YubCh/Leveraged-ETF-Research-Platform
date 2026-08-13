@@ -68,7 +68,7 @@ def run(window=125):
   for name in NAMES:
     print(f"{name}", bars[name])
   print("\n")
-  plot_bars(bars,window,  f"How often each strategy crashes and their depth (window={window})")
+  plot_bars(bars,window,  f"How often each strategy crashes and their depth)")
 
 if __name__ == "__main__":
     run()
