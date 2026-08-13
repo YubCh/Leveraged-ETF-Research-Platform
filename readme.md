@@ -4,8 +4,8 @@ Backtesting framework analyzing leveraged ETFs like QLD and TQQQ from QQQ or SSO
 
 The core idea: leveraged ETF's like TQQQ(2010) only exist after the post crash of the dot-com bubble and the subprime-mortage crisis. This project reconstructs their full history from the underlying index and validates the reconstruction against the real funds (~0.999 daily-return correlation), so different strategies can be tested.
 
-[!IMPORTANT]
-In this research I used QQQ and TQQQ as case studies. The Table and Graphs are based on the 8.Aug.2026. 
+>[!IMPORTANT]
+>In this research I used QQQ and TQQQ as case studies. The Table and Graphs are based on the 8.Aug.2026 of QQQ 
 
 ## The problem this project solves
 
