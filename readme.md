@@ -4,27 +4,83 @@ Backtesting framework analyzing leveraged ETFs like QLD and TQQQ from QQQ or SSO
 
 The core idea: leveraged ETF's like TQQQ(2010) only exist after the post crash of the dot-com bubble and the subprime-mortage crisis. This project reconstructs their full history from the underlying index and validates the reconstruction against the real funds (~0.999 daily-return correlation), so different strategies can be tested.
 
+[!IMPORTANT]
+In this research I used QQQ and TQQQ as case studies. The Table and Graphs are based on the 8.Aug.2026. 
+
 ## The problem this project solves
 
 Is leveraged strategy actually better than just buying the index.
 
 
-## Key findings
+## Findings
 
-- TQQQ Lost to QQQ over 1999-2026. Synthetic TQQQ compounded at ~4.3%/year vs QQQ's ~10.9% with a -99.97% max drawdown during the dot-com bubble and spent ~26years underwater before recently hitting its previous all time high before the dot-com bubble burst. - invisible in every TQQQ backtest that starts in 2010.
+### Basic Comparison Plain Asset vs Leveraged Asset
+- TQQQ Lost to QQQ over 1999-2026. Synthetic TQQQ compounded at ~4.3%/year vs QQQ's ~10.9% with a -99.97% max drawdown during the dot-com bubble and spent ~26years underwater till today and still below -50-60% to the all time high during the dot-com bubble. - invisible in every TQQQ backtest that starts in 2010.
 
-- buying over and selling under the 200 day SMA on leveraged DCA eliminates catastrophic drawdowns 0 vs 13 drawdowns >= 80% on TQQQ and reduces the drawdown depth in 90% of our monte-carlo bootstrapped histories, but only wins at 31% in final wealth. It is an insurance - you end up selling many small drawdowns to avoid crashes but usually end up with less final wealth but in a safer way.  
-
-
--
+- If we compare from the date the TQQQ was launched: "2010-02-11", TQQQ is performing 19 times better than the QQQ althought the TQQQ had multiple crashes to 60-80% since its launch. 
 
 
+<p align="center">
+  <img src="data/pictures/PureComparisonQQQ.png" width="300">
+</p>
 
 
-## How it works
+### Now to the Leverage Strategies
 
-``` data  -> strategy -> executor -> measure -> visualize
-```
+1. On our real history, leverage looks perfect
+DCA of $100 every 10 trading days, with a $1000 starting capital, 1999-2026 (total investment: $70K):
+
+| Strategy | Final Value | Total Invested | Max Drawdown | Longest Underwater | Multiple on Investment | vs QQQ DCA |
+|----------|------------:|---------------:|-------------:|-------------------:|-----------------------:| ---------------:|
+| QQQ DCA  | 857667 | 70000 | -0.558 | 2.639 | 12.252 | ---|
+| TQQQ DCA | 8325224 | 70000 | -0.978 | 6.567 | 118.932 | 9.71 |
+| TQQQ dip | 5938501 | 70000 | -0.963 | 4.615 | 84.836 | 6.92 |
+| TQQQ SMA DCA | 4806127 | 70000 | -0.736 | 3.286 | 68.659 | 5.60 |
+
+<p align="center">
+  <img src="data/pictures/Realhistory.png" width="300">
+</p>
+
+2. Across 500 alternative histories, leverage loses
+Block-boostrap resampling (20-day blocks of real QQQ returns, leverage applied to each paths) produced 500 alternative histories.
+
+| Strategy | Median Final | Mean Final | 5th pct | 95th pct | Median max DD | winrate vs QQQ DCA
+|----------|------------:|-----------:|-----------:|------------:|-------------------:| -------------------------:|
+| QQQ DCA  | 408990 | 620436 | 92910 | 1729396 | -51.7% | ---|
+| TQQQ DCA | 240608 | 9106648 | 9381 | 20522588 | -95.9% | 38.6% |
+| TQQQ dip | 230360 | 8507093 | 10589 | 19820947 | -95.4% | 36.8% |
+| TQQQ SMA DCA | 125099 | 1345826 | 14962 | 3771008 | -85.8% | 19.8% |
+
+![Results](data/pictures/bootstrapped.png)
+
+- Strategy win rate vs TQQQ DCA:
+  TQQQ dip beats TQQQ DCA in 52.0% of paths
+  TQQQ SMA DCA beats TQQQ DCA in 36.8% of paths
+
+3. Our history is lucky
+
+The TQQQ mean (9Million) against its median 240K. We have a handful of extraordinary universes carry the average while the typical is underperforming. 
+
+Every strategy did better in reality than in a typical simulated history.
+The secret is the timing the dot-com bubble crash happend when a investor starting 1999 DCA almost invested nothing. And the crashes the past decade happended after the money already compounded a lot.
+
+
+4. Defensive stops or sell offs saves the crashes but cuts the upside
+
+
+<p align="center">
+  <img src="data/pictures/MonteCarlo_Drawdowns.png" width="300">
+  <img src="data/pictures/DDcount.png" width="300">
+</p>
+
+SMA-200 rotation elminates the catastrophic band entirely but it drops the win rate against QQQ and beats TQQQ DCA only in 36.8% of histories.
+
+Dip-buying shows the same pattern more weakly: it beats plain TQQQ in 52% of histories, but it wins 
+
+
+## Architecture
+
+```text data  -> strategy -> executor -> measure -> visualize```
 
 - data: download, divided-adjust, simulate the leveraged series, splice the synthetic history onto real (if needed)
 - strategy: stock - cash allocation (```1.0```= fully invested, ```0.0``` = holding full cash, ```Nan``` = don't trade)
@@ -57,3 +113,8 @@ python main.py
 - no transactions costs, taxes or bid- ask spread are taken in account
 
 - Drawdowns are used in a 125days window. Years of decline can be counted as multiple drawdowns rather than a single drawdown. V-shape rebounds can be not listed: if the window starts in 2025 April it misses the ~25% drawdown that rebounded and hit its all time high around in 125 days which results in 0% drawdown.
+
+# Roadmap
+  [ ] Best strategy if we keep swapping Assets
+# Tech Stack
+python, yfinance, pandas, numpy, matplotlib, pytest
