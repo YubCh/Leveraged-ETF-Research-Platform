@@ -7,7 +7,8 @@ from src.data.loader import get_data
 from src.data.adjust import adjust
 from src.data.artificial_data import simulate
 from src.backtesting.dca import dca
-from src.backtesting.strategy import defined_drawdown_window, sma_strategy
+from src.backtesting.switch import switch_dca
+from src.backtesting.strategy import defined_drawdown_window, sma_strategy, dip_switch
 
 PARAMS = dict(income=100, income_period=10, invest_period=10,
               start_capital=1000, start_date=0)
@@ -47,6 +48,16 @@ def build_all(plain_asset_prices):
         f"{LEVERAGED_ASSET} SMA DCA": dca(leveraged, sma_strategy(leveraged, SMA_RATE), allow_sell=True, **PARAMS),
     }
 
+def build_addtional(plain_asset_prices):
+    leveraged = simulate(plain_asset_prices,LEVERAGE, EXPENSE_RATIO)
+    return {
+        f"dip switch {plain_asset_prices} to {leveraged}": switch_dca(plain_asset_prices, leveraged,
+                                 dip_switch(plain_asset_prices, enter_at=20, window=125),
+                                 **PARAMS),
+        f"dip switch {leveraged} to {plain_asset_prices}": switch_dca(plain_asset_prices, leveraged,
+                                 dip_switch(plain_asset_prices, enter_at=20, window=125),
+                                 **PARAMS),
+    }
 
 def maxdd(series):
     #dd from all time high
