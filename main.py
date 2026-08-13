@@ -4,8 +4,7 @@ from src.data.loader import get_data
 from src.data.adjust import adjust
 from src.visualization.plots import compare
 from src.backtesting.dca import dca
-qqq = adjust(get_data("QQQ"))
- 
+from scripts import real_history, monte_carlo, draw_down_counts
 
 # ext = extend_data("TQQQ", 3, 0.0084)
 # pre2010 = ext[ext.index < "2010-01-01"]
@@ -29,11 +28,22 @@ qqq = adjust(get_data("QQQ"))
 #     print(name, describe(s))
 # compare(series, title="QQQ vs leveraged QQQ, 1999-2026")
 
-qqq = adjust(get_data("QQQ"))
-qld = extend_data("QLD", 2, 0.0095)
-tqqq = extend_data("TQQQ", 3, 0.0084)
-compare({
-    "DCA QQQ":  dca(qqq, 100, 21, 0),
-    "DCA QLD":  dca(qld, 100, 21, 0),
-    "DCA TQQQ": dca(tqqq, 100, 21, 0),
-}, title="$100 monthly since 1999")
+# qqq = adjust(get_data("QQQ"))
+# qld = extend_data("QLD", 2, 0.0095)
+# tqqq = extend_data("TQQQ", 3, 0.0084)
+# compare({
+#     "DCA QQQ":  dca(qqq, 100, 21, 0),
+#     "DCA QLD":  dca(qld, 100, 21, 0),
+#     "DCA TQQQ": dca(tqqq, 100, 21, 0),
+# }, title="$100 monthly since 1999")
+
+
+def main():
+    real_history.run()
+    #real_history.run(start="2010-02-11")
+    monte_carlo.run(n_paths=500)
+    draw_down_counts.run()
+ 
+ 
+if __name__ == "__main__":
+    main()
