@@ -19,32 +19,36 @@ Is leveraged strategy actually better than just buying the index.
 
 - If we compare from the date the TQQQ was launched: "2010-02-11", TQQQ is performing 19 times better than the QQQ althought the TQQQ had multiple crashes to 60-80% since its launch. 
 
+
 ![Results](data/pictures/PureComparisonQQQ.png)
 
 
 ### Now to the Leverage Strategies
+>[!IMPORTANT]
+> TQQQ dip is a DCA that only activates during a dip which is defined as: DIP = dict(max_at=50, min_at=20, window=125)
+>SMA DCA sells the position under the SMA and buys when the asset is over the SMA. Set as SMA_RATE = 200
 
 1. On our real history, leverage looks perfect
-DCA of $100 every 10 trading days, with a $1000 starting capital, 1999-2026 (total investment: $70K):
+DCA of $100 every 10 trading days, with a $1,000 starting capital, 1999-2026 (total investment: $70K):
 
 | Strategy | Final Value | Total Invested | Max Drawdown | Longest Underwater | Multiple on Investment | vs QQQ DCA |
 |----------|------------:|---------------:|-------------:|-------------------:|-----------------------:| ---------------:|
-| QQQ DCA  | 857667 | 70000 | -0.558 | 2.639 | 12.252 | ---|
-| TQQQ DCA | 8325224 | 70000 | -0.978 | 6.567 | 118.932 | 9.71 |
-| TQQQ dip | 5938501 | 70000 | -0.963 | 4.615 | 84.836 | 6.92 |
-| TQQQ SMA DCA | 4806127 | 70000 | -0.736 | 3.286 | 68.659 | 5.60 |
+| QQQ DCA  | $857,667 | $70,000 | -0.558 | 2.639 | 12.252 | ---|
+| TQQQ DCA | $8,325,224 | $70,000 | -0.978 | 6.567 | 118.932 | 9.71 |
+| TQQQ dip | $5,938,501 | $70,000 | -0.963 | 4.615 | 84.836 | 6.92 |
+| TQQQ SMA DCA | $4,806,127 | $70,000 | -0.736 | 3.286 | 68.659 | 5.60 |
 
 ![Results](data/pictures/Realhistory.png)
 
-2. Across 500 alternative histories, leverage loses
+2. Across 500 Monte Carlo alternative histories, leverage loses. 
 Block-boostrap resampling (20-day blocks of real QQQ returns, leverage applied to each paths) produced 500 alternative histories.
 
 | Strategy | Median Final | Mean Final | 5th pct | 95th pct | Median max DD | winrate vs QQQ DCA
 |----------|------------:|-----------:|-----------:|------------:|-------------------:| -------------------------:|
-| QQQ DCA  | 408990 | 620436 | 92910 | 1729396 | -51.7% | ---|
-| TQQQ DCA | 240608 | 9106648 | 9381 | 20522588 | -95.9% | 38.6% |
-| TQQQ dip | 230360 | 8507093 | 10589 | 19820947 | -95.4% | 36.8% |
-| TQQQ SMA DCA | 125099 | 1345826 | 14962 | 3771008 | -85.8% | 19.8% |
+| QQQ DCA  | $408,990 | $620,436 | $92,910 | $1,729,396 | -51.7% | ---|
+| TQQQ DCA | $240,608 | $9,106,648 | $9,381 | $20,522,588 | -95.9% | 38.6% |
+| TQQQ dip | $230,360 | $8,507,093 | $10,589 | $19,820,947 | -95.4% | 36.8% |
+| TQQQ SMA DCA | $125,099 | $1,345,826 | $14,962 | $3,771,008 | -85.8% | 19.8% |
 
 ![Results](data/pictures/bootstrapped.png)
 
@@ -54,14 +58,15 @@ Block-boostrap resampling (20-day blocks of real QQQ returns, leverage applied t
 
 3. Our history is lucky
 
-The TQQQ mean (9Million) against its median 240K. We have a handful of extraordinary universes carry the average while the typical is underperforming. 
+- We have a handful of extraordinary universes carry the average while the typical is underperforming. (The TQQQ mean (9Million) against its median 240K.)
 
-Every strategy did better in reality than in a typical simulated history.
+- Every strategy did better in reality than in a typical simulated history.
 The secret is the timing the dot-com bubble crash happend when a investor starting 1999 DCA almost invested nothing. And the crashes the past decade happended after the money already compounded a lot.
 
 
-4. Defensive stops or sell offs saves the crashes but cuts the upside
-We can observe that the TQQQ Dip and DCA have more brutal crashes than the other two:
+4. Defensive stops or sell offs saves the crashes but cuts the upside.
+
+- We can observe that the TQQQ Dip and DCA have more brutal crashes than the other two:
 
 Drawdowns across the 500 Monte Carlo Path in Median
 ![Results](data/pictures/MonteCarlo_Drawdowns.png)
@@ -69,10 +74,16 @@ Drawdowns in our real history
 ![Results](data/pictures/DDcount.png)
  
 
-SMA-200 rotation elminates the catastrophic band entirely but it drops the win rate against QQQ and beats TQQQ DCA only in 36.8% of histories.
+- SMA-200 rotation elminates the catastrophic crashes entirely but it drops the win rate against QQQ and beats TQQQ DCA only in 36.8% of histories.
 
-Dip-buying shows the same pattern more weakly: it beats plain TQQQ in 52% of histories, but it wins 
+- Dip-buying shows the same pattern more weakly: it beats plain TQQQ in 52% of histories, but it wins 
 
+## Remaining Research
+
+The research is ongoing. The following areas remain to be investigated:
+
+- A Universe without the Dot-com bubble
+- new strategies: DCA with switching assets etc.. 
 
 ## Architecture
 
