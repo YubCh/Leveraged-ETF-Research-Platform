@@ -19,10 +19,7 @@ Is leveraged strategy actually better than just buying the index.
 
 - If we compare from the date the TQQQ was launched: "2010-02-11", TQQQ is performing 19 times better than the QQQ althought the TQQQ had multiple crashes to 60-80% since its launch. 
 
-
-<p align="center">
-  <img src="data/pictures/PureComparisonQQQ.png" width="300">
-</p>
+![Results](data/pictures/PureComparisonQQQ.png)
 
 
 ### Now to the Leverage Strategies
@@ -37,9 +34,7 @@ DCA of $100 every 10 trading days, with a $1000 starting capital, 1999-2026 (tot
 | TQQQ dip | 5938501 | 70000 | -0.963 | 4.615 | 84.836 | 6.92 |
 | TQQQ SMA DCA | 4806127 | 70000 | -0.736 | 3.286 | 68.659 | 5.60 |
 
-<p align="center">
-  <img src="data/pictures/Realhistory.png" width="300">
-</p>
+![Results](data/pictures/Realhistory.png)
 
 2. Across 500 alternative histories, leverage loses
 Block-boostrap resampling (20-day blocks of real QQQ returns, leverage applied to each paths) produced 500 alternative histories.
@@ -66,12 +61,13 @@ The secret is the timing the dot-com bubble crash happend when a investor starti
 
 
 4. Defensive stops or sell offs saves the crashes but cuts the upside
+We can observe that the TQQQ Dip and DCA have more brutal crashes than the other two:
 
-
-<p align="center">
-  <img src="data/pictures/MonteCarlo_Drawdowns.png" width="300">
-  <img src="data/pictures/DDcount.png" width="300">
-</p>
+Drawdowns across the 500 Monte Carlo Path in Median
+![Results](data/pictures/MonteCarlo_Drawdowns.png)
+Drawdowns in our real history
+![Results](data/pictures/DDcount.png)
+ 
 
 SMA-200 rotation elminates the catastrophic band entirely but it drops the win rate against QQQ and beats TQQQ DCA only in 36.8% of histories.
 
