@@ -34,3 +34,18 @@ def sma_strategy(prices, ma_rate):
   target = (prices > ma).astype(float) 
   target[ma.isna()] = float("nan")
   return target.shift(1)
+
+#witch to B during dip buy A when recovered. used together with swtich_dca
+def dip_switch(prices, enter_at=20, exit_at=0, window=125):
+  peak = prices.rolling(window, min_periods=1).max()
+  dd = (1 - prices/ peak) * 100
+  target = []
+  in_dip = False
+  for value in dd:
+    if not in_dip and value >= enter_at:
+      in_dip = True
+    elif in_dip and value <= exit_at:
+      in_dip = False
+    target.append(1 if in_dip else 0)
+
+  return pd.Series(target, index=prices.index).shift(1)
