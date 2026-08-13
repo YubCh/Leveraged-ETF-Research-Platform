@@ -2,7 +2,7 @@
 How often does a strategy crash in a certain period, and how deep.
 Max drawdown reports the worst crash. Since we are trading with leverage assets we want to see how often how deep and how fast a crash appears.
 
-The counting uses a window-period for a crash, since e.g. the all time high in extended tqqq takes ~20years to recover. The window can be chosen. 
+The counting uses a window-period for a crash, since e.g. the all time high in extended tqqq still didn't recover. The window can be chosen. 
 """
 
 
