@@ -121,7 +121,5 @@ python main.py
 
 - Drawdowns are used in a 125days window. Years of decline can be counted as multiple drawdowns rather than a single drawdown. V-shape rebounds can be not listed: if the window starts in 2025 April it misses the ~25% drawdown that rebounded and hit its all time high around in 125 days which results in 0% drawdown.
 
-# Roadmap
-  [ ] Best strategy if we keep swapping Assets
 # Tech Stack
 python, yfinance, pandas, numpy, matplotlib, pytest
